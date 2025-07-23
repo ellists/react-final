@@ -9,27 +9,56 @@ const CartItem = ({ onContinueShopping }) => {
 
   // Calculate total amount for all products in the cart
   const calculateTotalAmount = () => {
- 
+    let total = 0;
+    // Iterate over each item in the cart.
+    cart.forEach(item => {
+      // Extract the numeric cost from the string.
+      const itemCost = parseFloat(item.cost.substring(1));
+      // Add the item's subtotal (quantity * unit cost) to the cumulative total.
+      total += item.quantity * itemCost;
+    });
+    return total.toFixed(2); // Return the final total, formatted to two decimal places.
   };
 
+
   const handleContinueShopping = (e) => {
-   
+    onContinueShopping(e);
   };
 
 
 
   const handleIncrement = (item) => {
+    const updatedItem = { ...item };
+    updatedItem.quantity++;
+    dispatch(updateQuantity(updatedItem));
   };
 
   const handleDecrement = (item) => {
-   
+    // If the item's quantity is greater than 1, decrement it.
+    if (item.quantity > 1) {
+      dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1 }));
+    }
+    
+    else {
+      // Else (if quantity would drop to 0), remove the item completely from the cart.
+      // The payload for removeItem should be the item's name (string).
+      dispatch(removeItem(item.name));
+    }
   };
 
   const handleRemove = (item) => {
+    dispatch(removeItem(item.name));
   };
 
   // Calculate total cost based on quantity for an item
   const calculateTotalCost = (item) => {
+    const unitPrice = parseFloat(item.cost.substring(1));
+    return (item.quantity * unitPrice).toFixed(2);
+  };
+
+  const handleCheckoutShopping = () => {
+    // Alerts the user that this functionality will be added later.
+    alert('Coming Soon!');
   };
 
   return (
@@ -57,7 +86,7 @@ const CartItem = ({ onContinueShopping }) => {
       <div className="continue_shopping_btn">
         <button className="get-started-button" onClick={(e) => handleContinueShopping(e)}>Continue Shopping</button>
         <br />
-        <button className="get-started-button1">Checkout</button>
+        <button className="get-started-button1" onClick={(e) => handleCheckoutShopping(e)}>Checkout</button>
       </div>
     </div>
   );
